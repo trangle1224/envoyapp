@@ -1,0 +1,28 @@
+{
+  "name": "envoyapp",
+  "version": "1.0.0",
+  "description": "This app checks to see if visitors overstayed their welcome!",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trangle1224/envoyapp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/trangle1224/envoyapp/issues"
+  },
+  "homepage": "https://github.com/trangle1224/envoyapp#readme",
+  "engines": {
+    "node": "22.x"
+  },
+  "dependencies": {
+    "@envoy/envoy-integrations-sdk": "^1.5.2",
+    "axios": "^1.13.2",
+    "express": "^5.2.1"
+  }
+}
