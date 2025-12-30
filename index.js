@@ -11,21 +11,10 @@ console.log("Beginning NOW")
 app.post('/visitor-sign-out', async (req, res) => {
   try {
     const envoy = req.envoy;
-    // if (!envoy) {
-    //   console.error('Missing envoy context');
-    //   return res.status(500).json({ error: 'Missing envoy context' });
-    // }
+    console.log(envoy)
 
     const job = envoy.job;
-    // if (!job || typeof job.attach !== 'function') {
-    //   console.error('No attach method available on job');
-    //   return res.status(500).json({ error: 'Attach method not found' });
-    // }
-
     const meta = envoy.meta;
-    // if (!meta || meta.event !== 'entry_sign_out') {
-    //   return res.sendStatus(200);
-    // }
 
     const visitor = envoy.payload;
     const attributes = visitor.attributes;
