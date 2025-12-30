@@ -50,9 +50,10 @@ app.post('/visitor-sign-out', async (req, res) => {
     console.log({ durationMinutes, maxMinutes, message });
     
     const job = req.envoy.body.meta.job;
-    await job.attach({ label: 'Sign Out:', value: message });
+    console.log(job)
+    await event.attach({ label: 'Sign Out:', value: message });
     
-    res.send({ goodbye });
+    res.send({ message });
 
   } catch (err) {
     console.error("Handler error:", err);
