@@ -34,7 +34,8 @@ app.post('/visitor-sign-out', async (req, res) => {
     else{
       message = "User was great."
     }
-  
+    await job.attach({ label: 'Goodbye', value: message });
+
     res.status(200).json({ message });
   });
   
