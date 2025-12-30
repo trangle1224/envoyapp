@@ -17,7 +17,7 @@ app.post('/visitor-sign-out', async (req, res) => {
     }
 
     const { event, installation } = req.envoy;
-    console.log("Visitor Signed Out event:", event);
+    console.log("Full req.envoy object:", req.envoy);
 
     if (!event || event.type !== 'visitor.sign_out') {
       return res.sendStatus(200);
@@ -60,7 +60,7 @@ app.post('/visitor-sign-out', async (req, res) => {
   app.use(errorMiddleware());
   
   app.listen(process.env.PORT, () => {
-    console.log('Envoy app running on port ${process.env.PORT}');
+    console.log(`Envoy app running on port ${process.env.PORT}`);
   });
 
 
