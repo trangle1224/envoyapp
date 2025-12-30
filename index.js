@@ -6,9 +6,11 @@ const app = express();
 app.use(middleware());
 app.use(errorMiddleware());
 
-app.post('/webhooks', async (req, res) => {
+console.log("Beginning")
+
+app.post('/visitor-sign-out', async (req, res) => {
     const { event, installation } = req.envoy;
-  
+    console.log("Visitor Signed Out")
     if (event.type !== 'visitor.sign_out') {
       return res.sendStatus(200);
     }
@@ -21,10 +23,13 @@ app.post('/webhooks', async (req, res) => {
     const durationMinutes = (end - start) / 60000;
   
     const overstayed = durationMinutes > maxMinutes;
-  
+    
+    console.log(visit)
+    console.log(durationMinutes)
+    
     const message = overstayed
-      ? `⚠️ Visitor overstayed by ${Math.round(durationMinutes - maxMinutes)} minutes.`
-      : `✅ Visitor stayed within the allowed ${maxMinutes} minutes.`;
+      ? `Visitor overstayed by ${Math.round(durationMinutes - maxMinutes)} minutes.`
+      : `Visitor stayed within the allowed ${maxMinutes} minutes.`;
   
     await installation.api.visits.addMessage(visit.id, {
       message
@@ -44,20 +49,3 @@ app.post('/webhooks', async (req, res) => {
 
 
 
-  
-app.post('/hello-options', (req, res) => {
-    res.send([
-      {
-        label: 'Hello',
-        value: 'Hello',
-      },
-      {
-        label: 'Hola',
-        value: 'Hola',
-      },
-      {
-        label: 'Aloha',
-        value: 'Aloha',
-      },
-    ]);
-  });
