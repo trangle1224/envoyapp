@@ -4,8 +4,8 @@ const { middleware, errorMiddleware } = require('@envoy/envoy-integrations-sdk')
 
 
 const app = express();
-app.use(express.json());
 app.use(middleware());
+app.use(express.json());
 
 console.log("Beginning NOW")
 

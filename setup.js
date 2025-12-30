@@ -1,3 +1,4 @@
+console.log("setup.js")
 module.exports = {
     id: 'visit_time_limit',
     name: 'Visitor time limit',
