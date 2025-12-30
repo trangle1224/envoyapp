@@ -5,9 +5,9 @@ const { middleware, errorMiddleware } = require('@envoy/envoy-integrations-sdk')
 
 const app = express();
 app.use(express.json());
+app.use(middleware());
 
-
-console.log("Beginning")
+console.log("Beginning NOW")
 
 app.post('/visitor-sign-out', async (req, res) => {
     const { event, installation } = req.envoy;
