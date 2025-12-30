@@ -2,9 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const { middleware, errorMiddleware } = require('@envoy/envoy-integrations-sdk');
 
+
 const app = express();
-app.use(middleware());
-app.use(errorMiddleware());
+app.use(express.json());
+
 
 console.log("Beginning")
 
@@ -26,7 +27,7 @@ app.post('/visitor-sign-out', async (req, res) => {
     
     console.log(visit)
     console.log(durationMinutes)
-    
+
     const message = overstayed
       ? `Visitor overstayed by ${Math.round(durationMinutes - maxMinutes)} minutes.`
       : `Visitor stayed within the allowed ${maxMinutes} minutes.`;
@@ -43,7 +44,7 @@ app.post('/visitor-sign-out', async (req, res) => {
    */
   app.use(errorMiddleware());
   
-  app.listen(3000, () => {
+  app.listen(process.env.PORT, () => {
     console.log('Envoy app running on port 3000');
   });
 
