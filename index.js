@@ -18,8 +18,12 @@ app.post('/visitor-sign-out', async (req, res) => {
 
     const { event, installation } = req.envoy;
     console.log("Full req.envoy object:", req.envoy);
+    console.log("attributes and relationships")
+    console.log("Payload attributes:", req.envoy.body.payload.attributes);
+    console.log("Payload relationships:", req.envoy.body.payload.relationships);
 
-    if (!event || event.type !== 'visitor.sign_out') {
+
+    if (!req.envoy.body.meta || req.envoy.body.meta.event !== 'entry_sign_out') {
       return res.sendStatus(200);
     }
 
