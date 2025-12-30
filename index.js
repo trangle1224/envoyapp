@@ -27,7 +27,11 @@ app.post('/visitor-sign-out', async (req, res) => {
       return res.sendStatus(200);
     }
 
-    const visit = event.data.visit;
+    const attributes = req.envoy.body.payload.attributes;
+    const visit = {
+      started_at: attributes['signed-in-at'],
+      signed_out_at: attributes['signed-out-at'],
+    };
     console.log('Visit data:', visit);
 
     console.log("Installation settings:", installation.settings);
