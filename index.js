@@ -49,7 +49,9 @@ app.post('/visitor-sign-out', async (req, res) => {
 
     console.log({ durationMinutes, maxMinutes, message });
 
-    return res.status(200).json({ message });
+    return {
+        response: {message}
+      }
 
   } catch (err) {
     console.error("Handler error:", err);
