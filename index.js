@@ -11,19 +11,28 @@ console.log("Beginning NOW")
 
 app.post('/visitor-sign-out', async (req, res) => {
   try {
+    if (!req.envoy) {
+      console.error('req.envoy is missing');
+      return res.status(500).json({ error: 'Missing envoy context' });
+    }
+
     const { event, installation } = req.envoy;
-    console.log("Visitor Signed Out");
+    console.log("Visitor Signed Out event:", event);
 
     if (!event || event.type !== 'visitor.sign_out') {
       return res.sendStatus(200);
     }
 
     const visit = event.data.visit;
+    console.log('Visit data:', visit);
 
-    // 🔍 log settings explicitly
     console.log("Installation settings:", installation.settings);
 
     const maxMinutes = installation.settings.max_minutes;
+    if (typeof maxMinutes !== 'number') {
+      console.error('max_minutes setting missing or invalid:', maxMinutes);
+      return res.status(500).json({ error: 'Invalid max_minutes setting' });
+    }
 
     const start = new Date(visit.started_at);
     const end = new Date(visit.signed_out_at);
@@ -51,7 +60,7 @@ app.post('/visitor-sign-out', async (req, res) => {
   app.use(errorMiddleware());
   
   app.listen(process.env.PORT, () => {
-    console.log('Envoy app running on port env');
+    console.log('Envoy app running on port ${process.env.PORT}');
   });
 
 
