@@ -48,10 +48,11 @@ app.post('/visitor-sign-out', async (req, res) => {
         : "User was great.";
 
     console.log({ durationMinutes, maxMinutes, message });
-
-    return {
-        response: {message}
-      }
+    
+    
+    await job.attach({ label: 'Sign Out:', value: message });
+    
+    res.send({ goodbye });
 
   } catch (err) {
     console.error("Handler error:", err);
