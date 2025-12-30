@@ -10,30 +10,40 @@ app.use(express.json());
 console.log("Beginning NOW")
 
 app.post('/visitor-sign-out', async (req, res) => {
+  try {
     const { event, installation } = req.envoy;
-    console.log("Visitor Signed Out")
-    if (event.type !== 'visitor.sign_out') {
+    console.log("Visitor Signed Out");
+
+    if (!event || event.type !== 'visitor.sign_out') {
       return res.sendStatus(200);
     }
-  
+
     const visit = event.data.visit;
+
+    // 🔍 log settings explicitly
+    console.log("Installation settings:", installation.settings);
+
     const maxMinutes = installation.settings.max_minutes;
-  
+
     const start = new Date(visit.started_at);
     const end = new Date(visit.signed_out_at);
     const durationMinutes = (end - start) / 60000;
-  
-    const overstayed = durationMinutes > maxMinutes;
-    console.log(maxMinutes)
-    console.log(visit)
-    console.log(durationMinutes)
 
-    const message = durationMinutes > maxMinutes ? "User stayed past their allotted time." : "User was great.";
+    const message =
+      durationMinutes > maxMinutes
+        ? "User stayed past their allotted time."
+        : "User was great.";
 
-    //await job.attach({ label: 'Goodbye', value: message });
+    console.log({ durationMinutes, maxMinutes, message });
 
-    res.status(200).json({ message });
-  });
+    return res.status(200).json({ message });
+
+  } catch (err) {
+    console.error("Handler error:", err);
+    return res.sendStatus(500);
+  }
+});
+
   
   /**
    * SDK error handling
@@ -41,7 +51,7 @@ app.post('/visitor-sign-out', async (req, res) => {
   app.use(errorMiddleware());
   
   app.listen(process.env.PORT, () => {
-    console.log('Envoy app running on port 3000');
+    console.log('Envoy app running on port env');
   });
 
 
