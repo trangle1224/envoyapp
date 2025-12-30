@@ -11,62 +11,55 @@ console.log("Beginning NOW")
 
 app.post('/visitor-sign-out', async (req, res) => {
   try {
-    if (!req.envoy) {
-      console.error('req.envoy is missing');
+    const envoy = req.envoy;
+    if (!envoy) {
+      console.error('Missing envoy context');
       return res.status(500).json({ error: 'Missing envoy context' });
     }
 
-    const { event, installation, body } = req.envoy;
+    const job = envoy.job;
+    if (!job || typeof job.attach !== 'function') {
+      console.error('No attach method available on job');
+      return res.status(500).json({ error: 'Attach method not found' });
+    }
 
-    console.log('req.envoy object:', req.envoy);
-    console.log('event:', event);
-    console.log('event.attach:', event?.attach);
-    console.log('req.envoy.attach:', req.envoy?.attach);
-
-    if (!body.meta || body.meta.event !== 'entry_sign_out') {
+    const meta = envoy.meta;
+    if (!meta || meta.event !== 'entry_sign_out') {
       return res.sendStatus(200);
     }
 
-    const attributes = body.payload.attributes;
-    const visit = {
-      started_at: attributes['signed-in-at'],
-      signed_out_at: attributes['signed-out-at'],
-    };
+    const visitor = envoy.payload;
+    const attributes = visitor.attributes;
 
-    const maxMinutes = body.meta.config.Minutes;
+    const startedAt = attributes['signed-in-at'];
+    const signedOutAt = attributes['signed-out-at'];
 
+    const maxMinutes = meta.config.Minutes;
     if (typeof maxMinutes !== 'number') {
-      console.error('max_minutes setting missing or invalid:', maxMinutes);
-      return res.status(500).json({ error: 'Invalid max_minutes setting' });
+      console.error('Invalid maxMinutes config:', maxMinutes);
+      return res.status(500).json({ error: 'Invalid maxMinutes setting' });
     }
 
-    const start = new Date(visit.started_at);
-    const end = new Date(visit.signed_out_at);
+    const start = new Date(startedAt);
+    const end = new Date(signedOutAt);
     const durationMinutes = (end - start) / 60000;
 
-    const message =
-      durationMinutes > maxMinutes
-        ? "User stayed past their allotted time."
-        : "User was great.";
+    const message = durationMinutes > maxMinutes
+      ? "User stayed past their allotted time."
+      : "User was great.";
 
     console.log({ durationMinutes, maxMinutes, message });
 
-    if (event && typeof event.attach === 'function') {
-      await event.attach({ label: 'Sign Out:', value: message });
-    } else if (typeof req.envoy.attach === 'function') {
-      await req.envoy.attach({ label: 'Sign Out:', value: message });
-    } else {
-      console.error('No attach method available on event or req.envoy');
-      return res.status(500).json({ error: 'Attach method not found' });
-    }
+    await job.attach({ label: 'Sign Out:', value: message });
 
     res.send({ message });
     
   } catch (err) {
-    console.error("Handler error:", err);
-    return res.sendStatus(500);
+    console.error('Handler error:', err);
+    res.sendStatus(500);
   }
 });
+
 
 
   
