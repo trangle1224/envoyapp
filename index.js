@@ -16,22 +16,24 @@ app.post('/visitor-sign-out', async (req, res) => {
       return res.status(500).json({ error: 'Missing envoy context' });
     }
 
-    const { event, installation } = req.envoy;
-    console.log("Full req.envoy object:", req.envoy);
-    console.log("Meta config:", req.envoy.body.meta.config);
+    const { event, installation, body } = req.envoy;
 
+    console.log('req.envoy object:', req.envoy);
+    console.log('event:', event);
+    console.log('event.attach:', event?.attach);
+    console.log('req.envoy.attach:', req.envoy?.attach);
 
-    if (!req.envoy.body.meta || req.envoy.body.meta.event !== 'entry_sign_out') {
+    if (!body.meta || body.meta.event !== 'entry_sign_out') {
       return res.sendStatus(200);
     }
 
-    const attributes = req.envoy.body.payload.attributes;
+    const attributes = body.payload.attributes;
     const visit = {
       started_at: attributes['signed-in-at'],
       signed_out_at: attributes['signed-out-at'],
     };
 
-    const maxMinutes = req.envoy.body.meta.config.Minutes;
+    const maxMinutes = body.meta.config.Minutes;
 
     if (typeof maxMinutes !== 'number') {
       console.error('max_minutes setting missing or invalid:', maxMinutes);
@@ -48,18 +50,24 @@ app.post('/visitor-sign-out', async (req, res) => {
         : "User was great.";
 
     console.log({ durationMinutes, maxMinutes, message });
-    
-    const job = req.envoy.body.meta.job;
-    console.log(job)
-    await event.attach({ label: 'Sign Out:', value: message });
-    
-    res.send({ message });
 
+    if (event && typeof event.attach === 'function') {
+      await event.attach({ label: 'Sign Out:', value: message });
+    } else if (typeof req.envoy.attach === 'function') {
+      await req.envoy.attach({ label: 'Sign Out:', value: message });
+    } else {
+      console.error('No attach method available on event or req.envoy');
+      return res.status(500).json({ error: 'Attach method not found' });
+    }
+
+    res.send({ message });
+    
   } catch (err) {
     console.error("Handler error:", err);
     return res.sendStatus(500);
   }
 });
+
 
   
   /**
