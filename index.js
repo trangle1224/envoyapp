@@ -24,19 +24,18 @@ app.post('/visitor-sign-out', async (req, res) => {
     const durationMinutes = (end - start) / 60000;
   
     const overstayed = durationMinutes > maxMinutes;
-    
+    console.log(maxMinutes)
     console.log(visit)
     console.log(durationMinutes)
 
-    const message = overstayed
-      ? `Visitor overstayed by ${Math.round(durationMinutes - maxMinutes)} minutes.`
-      : `Visitor stayed within the allowed ${maxMinutes} minutes.`;
+    if(durationMinutes > maxMinutes){
+      message = "User stayed past their alloted time."
+    }
+    else{
+      message = "User was great."
+    }
   
-    await installation.api.visits.addMessage(visit.id, {
-      message
-    });
-  
-    res.sendStatus(200);
+    res.status(200).json({ message });
   });
   
   /**
