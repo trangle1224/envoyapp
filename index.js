@@ -18,10 +18,6 @@ app.post('/visitor-sign-out', async (req, res) => {
 
     const { event, installation } = req.envoy;
     console.log("Full req.envoy object:", req.envoy);
-    console.log("attributes and relationships")
-    console.log("Payload attributes:", req.envoy.body.payload.attributes);
-    console.log("Payload relationships:", req.envoy.body.payload.relationships);
-
     console.log("Meta config:", req.envoy.body.meta.config);
 
 
@@ -34,12 +30,9 @@ app.post('/visitor-sign-out', async (req, res) => {
       started_at: attributes['signed-in-at'],
       signed_out_at: attributes['signed-out-at'],
     };
-    console.log('Visit data:', visit);
-    console.log('Installation settings:', installation.settings);
 
-    console.log("Installation minutes:", installation.settings.Minutes);
+    const maxMinutes = req.envoy.body.meta.config.Minutes;
 
-    const maxMinutes = installation.settings.Minutes;
     if (typeof maxMinutes !== 'number') {
       console.error('max_minutes setting missing or invalid:', maxMinutes);
       return res.status(500).json({ error: 'Invalid max_minutes setting' });
