@@ -28,10 +28,7 @@ app.post('/visitor-sign-out', async (req, res) => {
     console.log(visit)
     console.log(durationMinutes)
 
-    const message = "User was great"
-    if(durationMinutes > maxMinutes){
-      message = "User stayed past their alloted time."
-    }
+    const message = durationMinutes > maxMinutes ? "User stayed past their allotted time." : "User was great.";
 
     //await job.attach({ label: 'Goodbye', value: message });
 
