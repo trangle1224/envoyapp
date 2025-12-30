@@ -34,9 +34,9 @@ app.post('/visitor-sign-out', async (req, res) => {
     };
     console.log('Visit data:', visit);
 
-    console.log("Installation settings:", installation.settings);
+    console.log("Installation settings:", installation.Minutes);
 
-    const maxMinutes = installation.settings.max_minutes;
+    const maxMinutes = installation.Minutes;
     if (typeof maxMinutes !== 'number') {
       console.error('max_minutes setting missing or invalid:', maxMinutes);
       return res.status(500).json({ error: 'Invalid max_minutes setting' });
